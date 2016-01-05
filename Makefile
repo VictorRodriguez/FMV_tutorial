@@ -8,19 +8,19 @@ normal_objdump:
 	gcc sort.c -g -c
 
 vectorized:
-	gcc -O3 sort.c -o sort
+	gcc -O3 -fopt-info-vec  sort.c -o sort
 
 vectorized_objdump:
 	gcc -O3 sort.c -g -c
 
 avx2:
-	gcc -O3 sort.c -o sort -mavx2 
+	gcc -O3 -fopt-info-vec  sort.c -o sort -mavx2
 
 avx2_objdump:
 	gcc -O3 sort.c -g -c -mavx2
 
 fmv:
-	gcc -O3 sort_fmv.c -o sort
+	gcc -O3  -fopt-info-vec  sort_fmv.c -o sort
 
 fmv_objdump:
 	gcc -O3 sort_fmv.c -g -c

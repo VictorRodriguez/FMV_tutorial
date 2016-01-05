@@ -6,6 +6,10 @@
 static struct timeval tm1;
 int a[256], b[256], c[256];
 
+void foo();
+void foo_1();
+void bubble_sort();
+
 static inline void start()
 {
     gettimeofday(&tm1, NULL);
@@ -21,7 +25,17 @@ static inline void stop()
     printf("%llu ms\n", t);
 
 }
-__attribute__((ctarget("arch=core-avx2","arch=corei7-avx","arch=slm","default"),noinline))
+
+int main(){
+    start();
+    foo();
+    bubble_sort(a,256);
+    foo_1();
+    stop();
+    return 0;
+}
+
+__attribute__((ctarget("arch=core-avx2","arch=atom","arch=slm","default"),noinline))
 void foo(){
     int i,x;
     for (x=0; x<MAX; x++){
@@ -32,9 +46,29 @@ void foo(){
 }
 
 
-int main(){
-    start();
-    foo();
-    stop();
-    return 0;
+__attribute__((ctarget("arch=core-avx2","arch=atom","arch=slm","default"),noinline))
+void bubble_sort (int *a, int n) {
+    int i, t, s = 1;
+    while (s) {
+        s = 0;
+        for (i = 1; i < n; i++) {
+            if (a[i] < a[i - 1]) {
+                t = a[i];
+                a[i] = a[i - 1];
+                a[i - 1] = t;
+                s = 1;
+            }
+        }
+    }
+}
+
+
+__attribute__((ctarget("arch=core-avx2","arch=atom","arch=slm","default"),noinline))
+void foo_1(){
+    int i,x;
+    for (x=0; x<MAX; x++){
+        for (i=0; i<256; i++){
+            a[i] = b[i] - c[i];
+        }
+    }
 }
