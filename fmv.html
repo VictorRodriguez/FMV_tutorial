@@ -374,13 +374,13 @@ openbenchmarking, the  <a href="https://openbenchmarking.org/test/pts/numpy">num
 
 <p>The <a href="https://clearlinux.org/">Clear Linux Project for Intel
     Architecture</a> is focusing on applying FMV technology on packages where
-it is detected that AVX2 instructions can give an improvement. In order to
-solve the problems of supporting FMV in a full Linux distribution, Clear Linux
-Project for Intel Architecture provides a patch generator based on
-vectorization-candidate detection (gcc flag -fopt-info-vec). This tool can
-provide all the FMV patches that a Linux distribution might use. We are
-selecting the ones that gave a significant performance improvement based on our
-benchmarks. There are other compiler optimization techniques that take
+it is detected that AVX instructions can give an improvement ( AVX / Avx2
+/ AVX-512) . In order to solve the problems of supporting FMV in a full Linux
+distribution, Clear Linux Project for Intel Architecture provides a patch
+generator based on vectorization-candidate detection (gcc flag -fopt-info-vec).
+This tool can provide all the FMV patches that a Linux distribution might use.
+We are selecting the ones that gave a significant performance improvement based
+on our benchmarks. There are other compiler optimization techniques that take
 advantage of the profile data to perform additional optimizations based on how
 the code behaves. Clear Linux Project for Intel Architecture will use these
 profiling features as well as the FMV approach to improve the performance of
