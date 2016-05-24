@@ -130,7 +130,7 @@ references) : </p>
 
 <p>As we can see, the selection of the supported architecture is pretty simple.
 The developer just needs to select the minimum set of architectures to support,
-such as: AVX2, Intel&reg; Atom&trade;, AMD* or almost every architecture option that GCC
+such as: AVX2, Intel&reg; Atom&trade;, AMD&reg; or almost every architecture option that GCC
 accepts from command line. At the end, the object dump of this code will have
 the optimized assemble instructions for each architecture, for example:</p>
 
@@ -198,17 +198,31 @@ functions for each architecture.</p>
 
 <p><strong>Code size impact</strong></p>
 
-The impact of new FMV in the code size is relative to the amount of functions
-to optimize, the size of them and the number of architectures to support.
-Lets say we have to compile for N architectures and functions with FMV code size
-percentage is "p", code size increase will be approximately 1 - p + p*N. This
-is for each FMV functions we want to optimize.
+<p> How FMV will increase binary code size? The answer on this question depends on
+how big are functions where FMV will be applied and number of requested
+versions. Let consider “N” be number of requested versions (including default)
+and “R” the ratio of the functions code to the whole application code size.
+When new size should be:</p>
 
-With today capacity of high volume hard disks the impact in the code size is
+<p> (1 – R) * C + R * C * N </p> 
+
+<p>Where “C” is initial binary code size. With FMV the code
+size increase should be : </p>
+
+<p> ((1 – R) * C + R * C * N) / C = 1 + R *(N - 1) </p>
+
+<p> Say, we have an application where hottest part takes 1% of the whole code size.
+When we apply FMV to this part to support 3 architecture features(“default”,
+“sse4.2”, “avx2”) the overall code size increase will be: </p>
+
+<p> 1 + (0.01 * (3 – 1)) = 1.02 or just 2% </p>
+
+
+<p>With today capacity of high volume hard disks the impact in the code size is
 relative to the application and infrastructure where the application will run.
 From data centers to embedded and IoT applications the importance of the code
 size impact against the performance improvement and portability is personal
-decision for each project.
+decision for each project.</p>
 
 <p><strong>Results</strong></p>
 
