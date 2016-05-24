@@ -196,8 +196,19 @@ used for almost all GLIBC functions. The GLIBC has memcpy optimize for each
 architecture, so when you call memcpy, GLIBC will call optimized memcpy
 functions for each architecture.</p>
 
-<p><strong>Binary Size</strong></p>
+<p><strong>Code size impact</strong></p>
 
+The impact of new FMV in the code size is relative to the amount of functions
+to optimize, the size of them and the number of architectures to support.
+Lets say we have to compile for N architectures and functions with FMV code size
+percentage is "p", code size increase will be approximately 1 - p + p*N. This
+is for each FMV functions we want to optimize.
+
+With today capacity of high volume hard disks the impact in the code size is
+relative to the application and infrastructure where the application will run.
+From data centers to embedded and IoT applications the importance of the code
+size impact against the performance improvement and portability is personal
+decision for each project.
 
 <p><strong>Results</strong></p>
 
