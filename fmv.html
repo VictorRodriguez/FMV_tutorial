@@ -139,7 +139,7 @@ None AVX code :
 
 add    %eax,%edx
 
-Intel® SSE :
+Intel&reg; AVX :
 
 vmovdqa 0x0(%rax),%xmm0
 vpaddd 0x0(%rax),%xmm0,%xmm0
@@ -226,10 +226,9 @@ decision for each project.</p>
 
 <p><strong>Results</strong></p>
 
-<p>The following table shows that on a Haswell platform, the FMV version of the
-binary executes with the same performance as a binary build with just AVX2
-instructions. On older processors, the same binary would still work, but the
-performance would be lower due to the lack of optimized instructions.</p>
+<p>The following table shows how with FMV you can get the binary still executable
+on all architectures, taking the advantages of each instruction set (~1.5
+faster on almost all of them comparing to just -O3 optimization)</p>
 
 <table>
 
