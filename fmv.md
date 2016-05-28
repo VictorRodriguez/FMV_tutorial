@@ -1,20 +1,16 @@
 <p>Introduction to Function Multiversioning (FMV) in GCC 6</p>
 
-<p>
-While new architecture provides many powerful instruction set extensions, it is
-challenging for developers to generate code that takes advantage of these
-capabilities. Current Linux* developers can't always take advantages of all new
+<p> While new architectures provide many powerful instruction set extensions,
+it is challenging for developers to generate code that takes advantage of these
+capabilities. Current Linux* developers can't always take advantage of all new
 architectures coming to the market every year without losing backward
-compatibility.  For example, for math-heavy code one may want to turn on
-Intel&reg;
-<a href="https://software.intel.com/en-us/node/513926">AVX</a>, while also
-wanting the binary to run on earlier CPUs. This problem stops users from
-benefiting from the best of the new computing architecture technology, from
-low-level kernel features to complex applications.</p>
+compatibility.  This problems stop users from benefiting from the best of the
+new computing architecture technology, from low-level kernel features to
+complex applications.</p>
 
 <p>Despite the fact that newer versions of GCC and kernel try to provide the tools
 to use the new architecture features before the platforms appear in the market,
-is not always easy for developers to use them. Currently, C code developers
+it is not always easy for developers to use them. Currently, C code developers
 have few choices to solve this problem: </p>
 
 <ul class="spacylist"> 
@@ -24,36 +20,42 @@ have few choices to solve this problem: </p>
     <li>Generate multiple versions of their binary, each targeting a different
     platform</li>
     <li>Choose a minimum hardware requirement that will not take advantage of
-    newer platforms</li>
+    newer platforms technology</li>
 </ul> 
 
-<p>Despite these challenges, the benefit of using the new architecture
-technology is compelling. For example, consider the second version of the
-advanced vector extension instruction set extension (Intel&reg; <a
-    href="https://software.intel.com/en-us/node/513926">AVX</a>), introduced in
-the 4th Generation Intel&reg; Core&trade; processor family (formerly known as <a
-    href="https://software.intel.com/en-us/haswell">Haswell</a>).  The benefits
-of using this technology in scientific computing fields are well understood.
-Such is the case of the Basic Linear Algebra libraries (OPENBLAS).
-The use of AVX2 in OPENBLAS libraries gave projects like R language a boost in
-performance of up to <a
+
+<p>Even though these challenges, the benefit of using the new architecture
+technology is compelling. For example, for math-heavy code one may want to turn on Intel
+<a href="https://software.intel.com/en-us/node/513926">Advanced Vector
+    Extensions (AVX)</a> technology, while also wanting the binary to run on
+earlier CPUs that does not support these instructions or in new CPUs with
+enhanced AVX instructions.</p>
+
+<p>The second version of the AVX set extension (Intel <a
+    href="https://software.intel.com/en-us/node/513926">AVX2</a>), introduced
+in the 4th Generation Intel Core processor family (formerly known as <a
+    href="https://software.intel.com/en-us/haswell">Haswell</a>) is an examp[le
+of an enhancement to the AVX instructions. The benefits of using this
+technology in scientific computing fields are well understood.
+Such is the case of the Basic Linear Algebra libraries (OPENBLAS).  The use of
+AVX2 in OPENBLAS libraries gave projects like R language a boost in performance
+of up to <a
     href="https://openbenchmarking.org/embed.php?i=1603014-GA-CLEARUBUN61&amp;sha=8f667cf&amp;p=2">
     2x in execution time</a> and the improvement in <a href=
     "https://01.org/blogs/2016/improving-python-performance-scientific-tools-and-libraries">python
-    scientific libraries</a> .</p>
+    scientific libraries</a>.</p>
 
-<p>This performance improvements of the Intel&reg; Advanced Vector Extensions 2
-(Intel&reg; AVX2) came from doubling the number of FLOPS (floating-point operations
+<p>This performance improvements of the Intel Advanced Vector Extensions 2
+(Intel AVX2) came from doubling the number of FLOPS (floating-point operations
 per second) per clock cycle, 256 bit integer instructions, floating-point fused
 multiply-add instructions, and gather operations.</p>
 
-<p>This instruction set has proved  significant performance improvements. Some
-<a href="https://software.intel.com/en-us/articles/how-intel-avx2-improves-performance-on-server-applications">publications</a>
-shows how with new Intel&reg; AVX2 instructions and the 256 bit registers on Intel
-E5 processor family, LINPACK was able to take advantage of the new instructions
-to achieve over 2x performance in comparison to running
-LINPACK with SSE instructions and over 1.3x performance against LINPACK running
-with AVX instructions.</p>
+<p>This instruction set has shown significant performance improvements. Some <a
+    href="https://software.intel.com/en-us/articles/how-intel-avx2-improves-performance-on-server-applications">publications</a>
+show how with new Intel AVX2 instructions and the 256 bit registers, LINPACK
+was able to take advantage of the new instructions to achieve over 2x
+performance in comparison to running LINPACK with SSE instructions and over
+1.3x performance against LINPACK running with AVX instructions.</p>
 
 <p>However, the use of the vector extensions technology means a lot of work in
 terms of development, deployment and manageability in the long term. The idea
@@ -94,19 +96,19 @@ int main () {
 }
 </pre>
 
-<p>Here, on each function the developer need to create specific functions and code
-for each target. This means a lot of overhead in the code. FMV increase the
+<p>Here, on each function the developer needs to create specific functions and code
+for each target. This means a lot of overhead in the code. FMV increases the
 number of lines of code in a program, its maintainability and manageability.</p>
 
-<p>On the other hand, the new GCC 6 solves this problems. It supports Function
-Multi Versioning in C  and C++ code with a single attribute that define the
+<p>On the other hand, the new GCC 6 solves these problems. It supports Function
+Multi Versioning in C and C++ code with a single attribute that define the
 minimum set of architectures to support, making it easier to develop Linux
 applications that take advantage of the enhanced instructions of the new
 architectures without the overhead of replicate the functions for each
 target.</p>
 
 <p>A simple example where FMV can take advantage of the AVX technology could be
-represented with an arrays addition (known as array_adition.c for future
+represented with an arrays addition (known as array_addition.c for future
 references) : </p>
 
 <pre>    
@@ -130,7 +132,7 @@ references) : </p>
 
 <p>As we can see, the selection of the supported architecture is pretty simple.
 The developer just needs to select the minimum set of architectures to support,
-such as: AVX2, Intel&reg; Atom&trade;, AMD&reg; or almost every architecture option that GCC
+such as: AVX2, Intel Atom, AMD or almost every architecture option that GCC
 accepts from command line. At the end, the object dump of this code will have
 the optimized assemble instructions for each architecture, for example:</p>
 
@@ -139,13 +141,13 @@ None AVX code :
 
 add    %eax,%edx
 
-Intel&reg; AVX :
+Intel AVX :
 
 vmovdqa 0x0(%rax),%xmm0
 vpaddd 0x0(%rax),%xmm0,%xmm0
 vmovaps %xmm0,0x0(%rax)
  
-Intel&reg; AVX2 :
+Intel AVX2 :
 
 vmovdqu (%r8,%rax,1),%ymm0
 vpaddd (%r9,%rax,1),%ymm0,%ymm0
@@ -153,14 +155,14 @@ vmovdqu %ymm0,(%rdi,%rax,1)
 
 </pre>
 
-<p>As shown in this example,  the FMV technology provides to our array_adition.c
-with the capabilities to use registers and instructions to run in Intel&reg; AVX2,
-Intel&reg; AVX2, Intel&reg; SSE and even Atom platforms. This capability  increases
+<p>As shown in this example,  the FMV technology provides to our array_addition.c
+with the capabilities to use registers and instructions to run in Intel AVX2,
+Intel AVX2, Intel; SSE and even Atom platforms. This capability  increases
 the range of platforms where our application can run without illegal
 instructions errors as well as exploit the hardware capabilities of the
 platform where our code is executed.</p>
 
-<p>Normally before GCC6, telling the compiler to use Intel&reg; AVX2 instructions
+<p>Normally before GCC6, telling the compiler to use Intel AVX2 instructions
 would limit our binary to Haswell and newer processors. With FMV, the compiler
 can generate AVX-optimized versions of the code and will automatically, at
 runtime, ensure that only the appropriate versions are used. In other words,
@@ -240,16 +242,16 @@ faster on almost all of them comparing to just -O3 optimization)</p>
 
   <tr>
     <th> GCC flags </th>
-    <th> Intel&reg; Core&trade; <br> i7-4700MQ CPU  <br> 2.40GHz <br> (Haswell)</th>
-    <th> Intel&reg; Core&trade; <br> i5-6260U CPU   <br> 1.80GHz <br> (Skylake)</th>
-    <th> Intel&reg; Core&trade; <br> i7-5557U CPU   <br> 3.10GHz <br> (Broadwell)</th>
-    <th> Intel&reg; Xeon&reg;   <br> E5-2603 v3 CPU <br> 1.60GHz <br> (Xeon)</th>
-    <th> Intel&reg; Atom&trade; <br> C2750 CPU      <br> 2.40GHz <br> (Atom) </th>
-    <th> Intel&reg; Core&trade; <br> i7-4960X CPU   <br> 3.60GHz <br> (Ivy bridge) </th>
+    <th> Intel Core <br> i7-4700MQ CPU  <br> 2.40GHz <br> (Haswell)</th>
+    <th> Intel Core <br> i5-6260U CPU   <br> 1.80GHz <br> (Skylake)</th>
+    <th> Intel Core <br> i7-5557U CPU   <br> 3.10GHz <br> (Broadwell)</th>
+    <th> Intel Xeon <br> E5-2603 v3 CPU <br> 1.60GHz <br> (Xeon)</th>
+    <th> Intel Atom <br> C2750 CPU      <br> 2.40GHz <br> (Atom) </th>
+    <th> Intel Core <br> i7-4960X CPU   <br> 3.60GHz <br> (Ivy bridge) </th>
   </tr>
 
   <tr>
-    <td > gcc array_adition.c</td>
+    <td > gcc array_addition.c</td>
     <td align="center"> 603   </td>
     <td align="center"> 645   </td>
     <td align="center"> 580   </td>
@@ -260,7 +262,7 @@ faster on almost all of them comparing to just -O3 optimization)</p>
 
 
   <tr>
-    <td > gcc -O3 array_adition.c</td>
+    <td > gcc -O3 array_addition.c</td>
     <td align="center"> 38  </td>
     <td align="center"> 44  </td>
     <td align="center"> 37  </td>
@@ -270,7 +272,7 @@ faster on almost all of them comparing to just -O3 optimization)</p>
  </tr>
 
   <tr>
-    <td > gcc -O3 array_adition.c -mavx</td>
+    <td > gcc -O3 array_addition.c -mavx</td>
     <td align="center"> 26 </td>
     <td align="center"> 32 </td>
     <td align="center"> 26 </td>
@@ -280,7 +282,7 @@ faster on almost all of them comparing to just -O3 optimization)</p>
   </tr>
 
   <tr>
-    <td > gcc -O3 array_adition.c -mavx2</td>
+    <td > gcc -O3 array_addition.c -mavx2</td>
     <td align="center"> 26 </td>
     <td align="center"> 32 </td>
     <td align="center"> 26 </td>
@@ -291,7 +293,7 @@ faster on almost all of them comparing to just -O3 optimization)</p>
 
 
   <tr>
-   <td > gcc -O3 array_adition.c ( with FMV
+   <td > gcc -O3 array_addition.c ( with FMV
        )<br>__attribute__((target_clones("avx2","arch=atom","default")))</td>
     <td align="center"> 26 </td>
     <td align="center"> 32 </td>
@@ -304,29 +306,9 @@ faster on almost all of them comparing to just -O3 optimization)</p>
 </tbody>
 </table>
 
-<p> The *default flags are: </p>
-
-<pre>
-Using built-in specs.
-COLLECT_GCC=gcc
-COLLECT_LTO_WRAPPER=/usr/lib64/gcc/x86_64-generic-linux/6.1.0/lto-wrapper
-Target: x86_64-generic-linux
-../gcc-6.1.0/configure --prefix=/usr --with-pkgversion='Clear Linux OS for
-Intel Architecture' --libdir=/usr/lib64 --enable-libstdcxx-pch
---libexecdir=/usr/lib64 --with-system-zlib --enable-shared
---enable-gnu-indirect-function --disable-vtable-verify --enable-threads=posix
---enable-__cxa_atexit --enable-plugin --enable-ld=default --enable-clocale=gnu
---disable-multiarch --disable-multilib --enable-lto --enable-linker-build-id
---build=x86_64-generic-linux --target=x86_64-generic-linux
---enable-languages=c,c++,fortran,go --enable-bootstrap --with-ppl=yes
---with-isl --includedir=/usr/include --with-gxx-include-dir=/usr/include/c++/
---exec-prefix=/usr --with-glibc-version=2.19 --with-system-libunwind
---with-gnu-ld --with-tune=haswell --with-arch=westmere --enable-libmpx
-Thread model: posix
-gcc version 6.1.0 (Clear Linux OS for Intel Architecture)
-
-</pre>
-
+<p> * The default CFLAGS (nothing special) and configurations are in the <a href=
+    "https://download.clearlinux.org/current/source/SRPMS/clr-rpm-config-35-38.src.rpm">
+    Clear Linux for Intel Architecture  </a>: </p>
 
 <p><strong>Real world example</strong></p>
 
@@ -368,6 +350,8 @@ openbenchmarking, the  <a href="https://openbenchmarking.org/test/pts/numpy">num
     </tr>
 </tbody>
 </table>
+
+This is 
 
 <p><strong>Next steps</strong></p>
 
