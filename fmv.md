@@ -4,7 +4,7 @@
 it is challenging for developers to generate code that takes advantage of these
 capabilities. Current Linux* developers can't always take advantage of all new
 architectures coming to the market every year without losing backward
-compatibility.  This problems stop users from benefiting from the best of the
+compatibility.  These problems stop users from benefiting from the best of the
 new computing architecture technology, from low-level kernel features to
 complex applications.</p>
 
@@ -45,7 +45,7 @@ of up to <a
     "https://01.org/blogs/2016/improving-python-performance-scientific-tools-and-libraries">python
     scientific libraries</a>.</p>
 
-<p>This performance improvements of the Intel Advanced Vector Extensions 2
+<p>Performance improvements of the Intel Advanced Vector Extensions 2
 (Intel AVX2) came from doubling the number of FLOPS (floating-point operations
 per second) per clock cycle, 256 bit integer instructions, floating-point fused
 multiply-add instructions, and gather operations.</p>
@@ -61,8 +61,7 @@ performance in comparison to running LINPACK with SSE instructions and over
 terms of development, deployment and manageability in the long term. The idea
 of having multiple versions of their binaries, one for each architecture,
 discourages the developers and OS distributions to support these features. With
-the advances in computing architecture growing every year, this seems like a
-herculean task.</p>
+the advances in computing architecture growing every year, this seems like an enormous task.</p>
 
 <p>It would be better to optimize some key hot functions for multiple
 architectures and execute them when the binary detects the CPU capabilities at
@@ -96,12 +95,12 @@ int main () {
 }
 </pre>
 
-<p>Here, on each function the developer needs to create specific functions and code
+<p>Here, on each function, the developer needs to create specific functions and code
 for each target. This means a lot of overhead in the code. FMV increases the
 number of lines of code in a program, its maintainability and manageability.</p>
 
 <p>On the other hand, the new GCC 6 solves these problems. It supports Function
-Multi Versioning in C and C++ code with a single attribute that define the
+Multi Versioning in C and C++ code with a single attribute that defines the
 minimum set of architectures to support, making it easier to develop Linux
 applications that take advantage of the enhanced instructions of the new
 architectures without the overhead of replicate the functions for each
@@ -132,9 +131,9 @@ references) : </p>
 
 <p>As we can see, the selection of the supported architecture is pretty simple.
 The developer just needs to select the minimum set of architectures to support,
-such as: AVX2, Intel Atom, AMD or almost every architecture option that GCC
-accepts from command line. At the end, the object dump of this code will have
-the optimized assemble instructions for each architecture, for example:</p>
+such as AVX2, Intel Atom, AMD or almost every architecture option that GCC
+accepts from the command line. At the end, the object dump of this code will have
+the optimized assembly instructions for each architecture, for example,:</p>
 
 <pre>
 None AVX code :
@@ -160,7 +159,7 @@ with the capabilities to use registers and instructions to run in Intel AVX2,
 Intel AVX2, Intel; SSE and even Atom platforms. This capability  increases
 the range of platforms where our application can run without illegal
 instructions errors as well as exploit the hardware capabilities of the
-platform where our code is executed.</p>
+a platform where our code is executed.</p>
 
 <p>Normally before GCC6, telling the compiler to use Intel AVX2 instructions
 would limit our binary to Haswell and newer processors. With FMV, the compiler
@@ -178,7 +177,7 @@ three kinds of instructions sets and registers available.</p>
     FMV</a> there was a  dispatch priority instead of a CPUID selection . The order in
 which the versions should be dispatched is prioritized to each function version
 based on the target attributes. Function versions with more advanced features
-get higher priority. For example a version targeted for AVX2 will have a higher
+get higher priority. For example, a version targeted for AVX2 will have a higher
 dispatch priority than a version targeted for SSE2.</p>
 
 <p>To keep the cost of dispatching low, the IFUNC mechanism is used for
@@ -190,18 +189,18 @@ resolve which of the implementations will be used by the application. Once an
 implementation choice is made it is fixed and may not be changed for the
 lifetime of the process.</p>
 
-<p>In GCC6 the resolver check CPUID and then call corresponding function. It does
+<p>In GCC6 the resolver check CPUID and then call the corresponding function. It does
 this once per binary execution.It means if you have multiple calls to the FMV
 function, only the first call will execute the CPUID comparison, the incoming
-executions will call the required version by pointer. This technique is already
+executions will call the required version by a pointer. This technique is already
 used for almost all GLIBC functions. The GLIBC has memcpy optimize for each
 architecture, so when you call memcpy, GLIBC will call optimized memcpy
 functions for each architecture.</p>
 
 <p><strong>Code size impact</strong></p>
 
-<p> How FMV will increase binary code size? The answer on this question depends on
-how big are functions where FMV will be applied and number of requested
+<p> How FMV will increase binary code size? The answer to this question depends on
+how big are functions where FMV will be applied and a number of requested
 versions. Let consider “N” be number of requested versions (including default)
 and “R” the ratio of the functions code to the whole application code size.
 When new size should be:</p>
@@ -335,36 +334,55 @@ workloads. The benchmark that is used in this is example is the one from the
 openbenchmarking, the  <a href="https://openbenchmarking.org/test/pts/numpy">numpy-1.0.2 </a> test </p>
 
 <table>
-<tbody>
+    <tbody>
+    <tr>
+        <th></th>
+        <th> Execution Time (seconds) </td>
+    </tr>
     <tr> 
-        <td> <strong>GCC flags</strong> </td>
-        <td> <strong>Execution Time</strong></td>
+        <th> GCC flags </td>
+        <th>  Intel Core i5-6260U @ 1.80GHz</td>
     </tr>
     <tr>
-        <td><strong>Numpy with -O3</strong></td>
-        <td> 8600 seconds </td>
+        <td>Numpy with -O3</td>
+
+        <td align="center"> 8600 </td>
     </tr>
     <tr>
-        <td><strong>Numpy with FMV patches</strong></td>
-        <td>8400 seconds </td> 
+        <td>Numpy with FMV patches</td>
+        <td align="center">8400 </td> 
     </tr>
-</tbody>
+    </tbody>
 </table>
 
-This is 
+This performance improvement is due to the functions in numpy code that benefit
+from vectorization. In order to detect this functions GCC
+provides the flag "-fopt-info-vec". This flag detect the
+vectorization-candidate functions. For example, building numpy with this flag
+will tell us that the file fftpack.c has code that can use vectorization: 
+
+<pre>
+numpy/fft/fftpack.c:813:7: note: loop peeled for vectorization to enhance alignment
+</pre>
+
+When we check the <a
+    href="https://github.com/numpy/numpy/blob/master/numpy/fft/fftpack.c">numpy
+    source code </a>, is easy to see how the function "static void radfg"
+performs heavy array additions that benefit from AVX technology.
 
 <p><strong>Next steps</strong></p>
 
 <p>The <a href="https://clearlinux.org/">Clear Linux Project for Intel
     Architecture</a> is focusing on applying FMV technology on packages where
-it is detected that AVX instructions can give an improvement ( AVX / Avx2
-/ AVX-512) . In order to solve the problems of supporting FMV in a full Linux
-distribution, Clear Linux Project for Intel Architecture provides a patch
-generator based on vectorization-candidate detection (gcc flag -fopt-info-vec).
-This tool can provide all the FMV patches that a Linux distribution might use.
-We are selecting the ones that gave a significant performance improvement based
-on our benchmarks. There are other compiler optimization techniques that take
+it is detected that AVX instructions can give an improvement ( AVX / Avx2 /
+AVX-512) . In order to solve the problems of supporting FMV in a full Linux
+distribution, Clear Linux Project for Intel Architecture provides a <a href="https://download.clearlinux.org/current/source/SRPMS/clr-rpm-config-35-38.src.rpm">
+    patch generator </a> based on vectorization-candidate detection (using the
+-fopt-info-vec flag). This tool can provide all the FMV patches that a Linux
+distribution might use.  We are selecting the ones that gave a significant
+performance improvement based on our benchmarks. There are other compiler
+optimization techniques that take
 advantage of the profile data to perform additional optimizations based on how
 the code behaves. Clear Linux Project for Intel Architecture will use these
-profiling features as well as the FMV approach to improve the performance of
+profiling features as well as the FMV approach to improving the performance of
 user applications as much as possible.</p>
