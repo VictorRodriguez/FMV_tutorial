@@ -93,7 +93,7 @@ actually makes it easier to develop Linux applications that can take advantage o
 of the new architectures, without the overhead of replicate functions for each target.</p>
 
 <p>A simple example where FMV can be written to take advantage of AVX technology features could be
-represented with an arrays addition (named "array_addition.c" for this example): </p>
+represented with an arrays addition (named <i>array_addition.c</i> for this example): </p>
 
 <pre>    
     #define MAX 1000000
@@ -140,7 +140,7 @@ vpaddd (%r9,%rax,1),%ymm0,%ymm0
 vmovdqu %ymm0,(%rdi,%rax,1)
 </pre>
 
-<p>Notice that the new implementation of FMV provides "array_addition.c" ability to
+<p>Notice that the new implementation of FMV provides <i>array_addition.c</i> ability to
 use registers and instructions for Intel AVX, AVX2, and even Atom platforms. This
 capability increases the range of platforms where our application can run without
 illegal instruction errors exploiting hardware capabilities of the a platform where
@@ -190,9 +190,9 @@ versions. Let consider <i>N</i> be number of requested versions (including defau
 and <i>R</i> the ratio of the functions code to the whole application code size.
 When new size should be: </p>
 
-<pre> ( 1 - R ) * C + R * C* N </pre> 
+<p> ( 1 - R ) * C + R * C* N </p> 
 
-<p>Where "C" is initial binary code size. With FMV the code
+<p>Where <i>C</i> is initial binary code size. With FMV the code
 size increase should be : </p>
 
 <p> ((1 - R) * C + R * C * N) / C = 1 + R *(N - 1) </p>
