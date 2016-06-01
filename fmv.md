@@ -1,4 +1,4 @@
-<p> Introduction to Function Multi-Versioning (FMV) in GCC 6 <p>
+<h1>Introduction to Function Multi-Versioning (FMV) in GCC 6 <h1>
 
 <p>While the latest architectures offer powerful instruction set
 extensions, developers may find it challenging to integrate an existing
@@ -8,9 +8,8 @@ in newer computing architectures. With FMV in GCC 4.8, the overhead for backward
 compatibility was rather large, but GCC 6 introduces changes that make it
 easier to bring architectural-based optimizations to your code.</p>
 
-<p>espite the fact 
-that newer versions of GCC and the kernel attempt to expose tools for using the
-new architecture features before the platforms appear in the market, it can be
+<p>Newer versions of GCC and the kernel attempt to expose tools for using the
+new architecture features before the platforms appear in the market; however, it can be
 tough for developers to use them. Currently, C code developers have a few choices:</p>
 
 
@@ -143,7 +142,7 @@ vmovdqu %ymm0,(%rdi,%rax,1)
 <p>Notice that the new implementation of FMV provides <i>array_addition.c</i> ability to
 use registers and instructions for Intel AVX, AVX2, and even Atom platforms. This
 capability increases the range of platforms where our application can run without
-illegal instruction errors exploiting hardware capabilities of the a platform where
+illegal instruction errors exploiting hardware capabilities of a platform where
 our code is executed.</p>
 
 <p>Before GCC 6, telling the compiler to use Intel AVX2 instructions would limit
@@ -156,7 +155,7 @@ pre-Haswell generation processor, it will fall back to using the standard
 instructions supported by the older processor. The object dump will have the
 three kinds of instructions sets and registers available.</p>
 
-<p><strong>CPUID selection</strong></p> 
+<h3>CPUID selection</h3> 
 
 <p>In GCC 4, <a href="https://gcc.gnu.org/wiki/FunctionMultiVersioning"> 
 FMV had a dispatch priority rather than a CPUID selection</a>. 
@@ -182,7 +181,7 @@ used for almost all GLIBC functions. The GLIBC has ``memcpy`` optimized for each
 architecture, so when you call memcpy, GLIBC will call optimized memcpy
 functions for each architecture.</p>
 
-<p><strong>Code size impact</strong></p>
+<h3>Code size impact</strong></h3>
 
 <p> How FMV will increase binary code size? The answer to this question depends on
 how big are functions where FMV will be applied and a number of requested
@@ -212,7 +211,7 @@ From data centers to embedded and IoT applications, the importance of the code
 size impact against the performance improvement and portability must be decided
 in each scenario.</p>
 
-<p><strong>Results</strong></p>
+<h3>Results</h3>
 
 <p>The following table shows how with FMV you can get the binary still executable
 on all architectures, taking the advantages of each instruction set (~1.5 times
@@ -296,7 +295,7 @@ faster on most of them, comparing to just -O3 optimization):</p>
     "https://download.clearlinux.org/current/source/SRPMS/clr-rpm-config-35-38.src.rpm">
     specified</a> in Clear Linux for Intel Architecture </p>
 
-<p><strong>Real world example</strong></p>
+<h3>Real world example</strong></h3>
 
 <p>Today more and more industry segments are benefiting from the use of cloud-based
 scientific computing. These segments include chemical engineering, digital
@@ -341,10 +340,10 @@ workloads. The benchmark that is used in this is example is the one from
 </table>
 
 <p>This performance improvement is due to the functions in numpy code that benefit
-from vectorization. In order to detect this functions GCC
-provides the flag ``-fopt-info-vec`` . This flag detect the
+from vectorization. In order to detect these functions, GCC
+provides the flag ``-fopt-info-vec`` . This flag detects the
 vectorization-candidate functions. For example, building numpy with this flag
-will tell us that the file fftpack.c has code that can use vectorization: </p>
+will tell us that the file ``fftpack.c`` has code that can use vectorization: </p>
 
 <pre>
 numpy/fft/fftpack.c:813:7: note: loop peeled for vectorization to enhance alignment
@@ -352,17 +351,16 @@ numpy/fft/fftpack.c:813:7: note: loop peeled for vectorization to enhance alignm
 
 <p>When we check the 
 <a href="https://github.com/numpy/numpy/blob/master/numpy/fft/fftpack.c">numpy
-    source code </a>
-, it's easy to see how the ``static void radfg`` function performs heavy array additions
+    source code </a>, it's easy to see how the ``static void radfg`` function performs heavy array additions
 that use AVX technology.</p>
 
-<p><strong>Next steps</strong></p>
+<h3>Next steps</strong></h3>
 
 <p>The 
 <a href="https://clearlinux.org/">Clear Linux Project for Intel
     Architecture</a> is currently focusing on
 applying FMV technology to packages where it is detected that AVX instructions can yield an improvement
-( AVX / AVX2 / AVX-512).  To solve some of the issues involved with supporting FMV in a full Linux
+(AVX / AVX2 / AVX-512).  To solve some of the issues involved with supporting FMV in a full Linux
 distribution, Clear Linux Project for Intel Architecture provides a 
 <a href="https://download.clearlinux.org/current/source/SRPMS/clr-rpm-config-35-38.src.rpm"> patch generator </a> based
 on vectorization-candidate detection (using the ``-fopt-info-vec`` flag). This tool can provide all
@@ -370,4 +368,4 @@ the FMV patches that a Linux distribution might use.  We are selecting the ones 
 performance improvement based on our benchmarks. There are other compiler optimization techniques that take
 advantage of the profile data to perform additional optimizations based on how the code behaves. Clear
 Linux Project for Intel Architecture will use these profiling features as well as the FMV approach to
-improving the performance of user applications as much as possible.</p>
+improve the performance of user applications as much as possible.</p>
