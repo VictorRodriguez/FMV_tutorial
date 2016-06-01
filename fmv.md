@@ -1,59 +1,70 @@
-# Introduction to Function Multi-Versioning (FMV) in GCC 6
+<p> Introduction to Function Multi-Versioning (FMV) in GCC 6 <p>
 
-While the latest architectures offer powerful instruction set
+<p>While the latest architectures offer powerful instruction set
 extensions, developers may find it challenging to integrate an existing
-code base with a new architecture. Reluctancy to lose backward-compatibility
+code base with a new architecture. Reluctance to lose backward-compatibility
 is one of the main roadblocks slowing developers from realizing advancements
 in newer computing architectures. With FMV in GCC 4.8, the overhead for backward
 compatibility was rather large, but GCC 6 introduces changes that make it
-easier to bring architectural-based optimizations to your code.  
+easier to bring architectural-based optimizations to your code.</p>
 
-This problem of backward-compatibility is not unique to kernel coders; it
-persists for developers working on any part of the stack. And despite the fact
+<p>espite the fact 
 that newer versions of GCC and the kernel attempt to expose tools for using the
 new architecture features before the platforms appear in the market, it can be
-tough for developers to use them. Currently, C code developers have a few choices: </p>
+tough for developers to use them. Currently, C code developers have a few choices:</p>
 
-* Write multiple versions of their code, each targeting different instruction set
-  extensions; this requires they also manually handle runtime dispatching of these
-  versions. 
-* Generate multiple versions of their binary, each targeting a different platform.
-* Choose a minimum hardware requirement that doesn't take advantage of technology
-  in newer platforms. 
 
-### Costs vs Benefits
+<ul class="spacylist"> 
+    <li>Write multiple versions of their code, each targeting different instruction set
+        extensions; this requires they also manually handle runtime dispatching of
+        these versions.</li> 
+    <li> Generate multiple versions of their binary, each targeting a different
+        platform.</li>
+    <li>Choose a minimum hardware requirement that doesn't take advantage of
+        technology in newer platforms. </li>
+</ul> 
 
-Oftentimes, the benefits of using the new architecture's technologies are compelling
+
+<p>Oftentimes, the benefits of using the new architecture's technologies are compelling
 enough to outweigh any integration challenges. Math-heavy code, for example, can be
-significantly optimized by turning on [Intel Advanced Vector Extensions](https://software.intel.com/en-us/node/513926)
-technology.  The second version of the AVX set extension (Intel [AVX2](https://software.intel.com/en-us/node/513926)),
-introduced in the 4th-Gen Intel Core processor family AKA [Haswell](https://software.intel.com/en-us/haswell)
+significantly optimized by turning on <a href="https://software.intel.com/en-us/node/513926">Advanced Vector
+    Extensions (AVX)</a> 
+technology.  The second version of the AVX set extension (Intel <a
+    href="https://software.intel.com/en-us/node/513926">AVX2</a>)),
+introduced in the 4th-Gen Intel Core processor family AKA <a
+    href="https://software.intel.com/en-us/haswell">Haswell</a>)
 is one option with compelling reasons to do the work. The benefits of AVX2 are well understood
 in scientific computing fields.  The use of AVX2 in OPENBLAS libraries can give a project like R
-language a boost up to [2X faster execution time](https://openbenchmarking.org/embed.php?i=1603014-GA-CLEARUBUN61&amp;sha=8f667cf&amp;p=2); it can also 
-yield significant improvement in [python scientific libraries](https://01.org/blogs/2016/improving-python-performance-scientific-tools-and-libraries).
+language a boost up to 
+<a href="https://openbenchmarking.org/embed.php?i=1603014-GA-CLEARUBUN61&amp;sha=8f667cf&amp;p=2">
+2X faster execution time</a>; it can also 
+yield significant improvement in <a href=
+    "https://01.org/blogs/2016/improving-python-performance-scientific-tools-and-libraries">python
+    scientific libraries</a></p>
 
-These performance improvements are gained from doubling the number of FLOPS (floating-point operations
+<p>These performance improvements are gained from doubling the number of FLOPS (floating-point operations
 per second) per clock cycle, using 256-bit integer instructions, floating-point fused
-multiply-add instructions, and gather operations. 
+multiply-add instructions, and gather operations.</p>
 
-However, the use of Vector eXtensions (VX) technology means a lot of work in
+<p>However, the use of Vector eXtensions (VX) technology means a lot of work in
 terms of development, deployment and manageability. The idea of having to maintain
 multiple versions of binaries (one for each architecture) discourages developers and OS
-distributions from supporting these features. 
+distributions from supporting these features.</p>
 
-Would it be better to optimize some key hot functions for multiple architectures and
+<p> Would it be better to optimize some key hot functions for multiple architectures and
 execute them when the binary detects the CPU capabilities at runtime? Actually, this feature has existed
 since GCC 4.8 (but only for C++), and has become known as Function Multi-Versioning (FMV). FMV
 in GCC 4.8 made it easy for a developer to specify multiple versions of a function; each could be
 catered to a specific target ISA feature. GCC then took care of creating the dispatching code necessary
-to execute the right function version.
+to execute the right function version.</p>
 
-To show how FMV works in our C++ code, we show how it specifies multiple versions of a function. For
-example, the code presented in [the FMV documentation for GCC 4.8](https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Function-Multiversioning.html)
-shows: 
+<p> If we want to use FMV in our C++ code we might specify multiple versions of
+a function. For example, the code presented in the  
+<a
+    href="https://gcc.gnu.org/onlinedocs/gcc-4.9.2/gcc/Function-Multiversioning.html"> FMV documentation for GCC 4.8
+</a> shows:</p>
 
-```   
+<pre>      
 __attribute__ ((target ("sse4.2")))
 int foo (){
     // foo version for SSE4.2
@@ -70,29 +81,29 @@ int main () {
     assert ((*p) () ==foo ());
     return 0;
 }
-```
+</pre>
 
-Here, for each function, the developer needed to create specific functions and code
+<p>Here, for each function, the developer needed to create specific functions and code
 for each target. Historically, this would have required extra overhead in the code: FMV
-increasing the number of lines of code in a program makes it more clunky to manage and maintain.
+increasing the number of lines of code in a program makes it more clunky to manage and maintain.</p>
 
-Fortunately, GCC 6 solves this issue: it supports Function Multi-Versioning in **both** C and C++
-code with a *single attribute* to define the minimum set of architectures to support.  This
+<p>Fortunately, GCC 6 solves this issue: it supports Function Multi-Versioning in <strong>both</strong> C and C++
+code with a <i>single attribute</i> to define the minimum set of architectures to support.  This
 actually makes it easier to develop Linux applications that can take advantage of enhanced instructions
-of the new architectures, without the overhead of replicate functions for each target.
+of the new architectures, without the overhead of replicate functions for each target.</p>
 
-A simple example where FMV can be written to take advantage of AVX technology features could be
-represented with an arrays addition (named ``array_addition.c`` for this example):
+<p>A simple example where FMV can be written to take advantage of AVX technology features could be
+represented with an arrays addition (named "array_addition.c" for this example): </p>
 
-```    
+<pre>    
     #define MAX 1000000
     int a[256], b[256], c[256];
 
     __attribute__((target_clones("avx2","arch=atom","default")))
     void foo(){
         int i,x;
-            for (x=0; x<MAX; x++){
-                for (i=0; i<256; i++){
+            for (x=0; x&lt;MAX; x++){
+                for (i=0; i&lt;256; i++){
                     a[i] = b[i] + c[i];
                 }
             }
@@ -101,17 +112,17 @@ represented with an arrays addition (named ``array_addition.c`` for this example
         foo();
         return 0;
     }
-```
+</pre>
 
-As we can see, the selection of the supported architecture is pretty simple.
-The developer needs only to select the minimum set of architectures to support --
+<p>As we can see, the selection of the supported architecture is pretty simple.
+The developer needs only to select the minimum set of architectures to support:
 AVX2, Intel Atom, AMD, or almost any architecture option that GCC
-accepts from the command line. 
+accepts from the command line. </p>
 
-Ultimately, the object dump of this code will have the optimized assembly instructions
-for each architecture. For example:
+<p>Ultimately, the object dump of this code will have the optimized assembly instructions
+for each architecture. For example:</p>
 
-```
+<pre>
 None AVX code :
 
 add    %eax,%edx
@@ -127,87 +138,85 @@ Intel AVX2 :
 vmovdqu (%r8,%rax,1),%ymm0
 vpaddd (%r9,%rax,1),%ymm0,%ymm0
 vmovdqu %ymm0,(%rdi,%rax,1)
+</pre>
 
-```
-
-Notice that the new implementation of FMV provides ``array_addition.c`` ability to
+<p>Notice that the new implementation of FMV provides "array_addition.c" ability to
 use registers and instructions for Intel AVX, AVX2, and even Atom platforms. This
 capability increases the range of platforms where our application can run without
-illegal instruction errors or exploited hardware capabilities of the a platform where
-our code is executed.
+illegal instruction errors exploiting hardware capabilities of the a platform where
+our code is executed.</p>
 
-Before GCC 6, telling the compiler to use Intel AVX2 instructions would limit
+<p>Before GCC 6, telling the compiler to use Intel AVX2 instructions would limit
 compatibility of our binary to only Haswell and newer processors. With FMV, the
 compiler can generate AVX-optimized versions of the code; and it will automatically,
-at runtime, ensure that *only* the appropriate versions are used. In other words,
+at runtime, ensure that <i>only</i> the appropriate versions are used. In other words,
 when the binary is run on Haswell or later generation CPUs, it will use
-Haswell-specific optimizations; and when that *same* binary is run on a
+Haswell-specific optimizations; and when that <i>same</i> binary is run on a
 pre-Haswell generation processor, it will fall back to using the standard
 instructions supported by the older processor. The object dump will have the
-three kinds of instructions sets and registers available.
+three kinds of instructions sets and registers available.</p>
 
-### CPUID selection
+<p><strong>CPUID selection</strong></p> 
 
-In GCC 4, [FMV had a dispatch priority rather than a CPUID selection](https://gcc.gnu.org/wiki/FunctionMultiVersioning). 
+<p>In GCC 4, <a href="https://gcc.gnu.org/wiki/FunctionMultiVersioning"> 
+FMV had a dispatch priority rather than a CPUID selection</a>. 
 The dispatch order was prioritized to each function version, based on the target
 attributes. Function versions with more advanced features got higher priority.
 For example, a version targeted for AVX2 would have a higher dispatch priority
-than a version targeted for SSE2.
+than a version targeted for SSE2.</p>
 
-To keep the cost of dispatching low, the IFUNC mechanism is used for
+<p>To keep the cost of dispatching low, the IFUNC mechanism is used for
 dispatching. The GNU indirect function support (IFUNC) is a feature of the GNU
 toolchain that allows a developer to create multiple implementations of a given
 function and to select amongst them at runtime using a resolver function. The
 resolver function is called by the dynamic loader during early startup to
 resolve which of the implementations will be used by the application. Once an
 implementation choice is made it is fixed and may not be changed for the
-lifetime of the process.
+lifetime of the process.</p>
 
-In GCC 6, the resolver checks CPUID and then calls the corresponding function. It
+<p>In GCC 6, the resolver checks CPUID and then calls the corresponding function. It
 does this once per binary execution. So when you have multiple calls to the FMV
 function, only the first call will execute the CPUID comparison; the incoming
 executions will call the required version by a pointer. This technique is already
 used for almost all GLIBC functions. The GLIBC has ``memcpy`` optimized for each
 architecture, so when you call memcpy, GLIBC will call optimized memcpy
-functions for each architecture.
+functions for each architecture.</p>
 
-### Code size impact
+<p><strong>Code size impact</strong></p>
 
-To what extent does FMV increase binary code size? The answer to this question
-depends upon how large the functions are where FMV will be applied, and upon the 
-total number of requested versions. Let's consider **N** requested versions (including default)
-and **R** as the ratio of the function's code to code size of the entire application.
-The new size should be:
+<p> How FMV will increase binary code size? The answer to this question depends on
+how big are functions where FMV will be applied and a number of requested
+versions. Let consider <i>N</i> be number of requested versions (including default)
+and <i>R</i> the ratio of the functions code to the whole application code size.
+When new size should be: </p>
 
-```
-(1 – R) * C + R * C * N 
-``` 
+<pre> ( 1 - R ) * C + R * C* N </pre> 
 
-And where **C** is the initial binary code size, code size increase with FMV should be:
+<p>Where "C" is initial binary code size. With FMV the code
+size increase should be : </p>
 
-```
-((1 – R) * C + R * C * N) / C = 1 + R *(N - 1)
-```
+<p> ((1 - R) * C + R * C * N) / C = 1 + R *(N - 1) </p>
 
-Now let's say that we have an application where the hottest part takes 1 percent of the whole
-code size. When we apply FMV to this part to support 3 architecture features (“default”,
-“sse4.2”, “avx2”) the overall code size increase will be: </p>
+<p> Say, we have an application where hottest part takes 1% of the whole code size.
+When we apply FMV to this part to support 3 architecture features(default,
+sse4.2, avx2) the overall code size increase will be: </p>
 
-```
-1 + (0.01 * (3 – 1)) = 1.02 or just 2%
-```
+<p> 1 + (0.01 * (3 - 1)) = 1.02 or just 2% </p>
 
-With today's capacity of high volume hard disks, the impact in the code size is
+
+</pre>
+
+<p>With today's capacity of high volume hard disks, the impact in the code size is
 relative to the application and infrastructure where the application will run.
 From data centers to embedded and IoT applications, the importance of the code
 size impact against the performance improvement and portability must be decided
-in each scenario.
+in each scenario.</p>
 
-### Results
+<p><strong>Results</strong></p>
 
-The following table shows how with FMV you can get the binary still executable
+<p>The following table shows how with FMV you can get the binary still executable
 on all architectures, taking the advantages of each instruction set (~1.5 times
-faster on most of them, comparing to just -O3 optimization):
+faster on most of them, comparing to just -O3 optimization):</p>
 
 <table>
 
@@ -281,30 +290,34 @@ faster on most of them, comparing to just -O3 optimization):
 </tbody>
 </table>
 
-The default CFLAGS (nothing special) and configurations are [specified](https://download.clearlinux.org/current/source/SRPMS/clr-rpm-config-35-38.src.rpm) in 
-Clear Linux for Intel Architecture:
 
-### Real world example
 
-Today more and more industry segments are benefiting from the use of cloud-based
+<p> The default CFLAGS (nothing special) and configurations are <a href=
+    "https://download.clearlinux.org/current/source/SRPMS/clr-rpm-config-35-38.src.rpm">
+    specified</a> in Clear Linux for Intel Architecture </p>
+
+<p><strong>Real world example</strong></p>
+
+<p>Today more and more industry segments are benefiting from the use of cloud-based
 scientific computing. These segments include chemical engineering, digital
-content creation, financial services and analytics applications. 
+content creation, financial services and analytics applications.</p> 
 
-One of the most popular scientific computing libraries is the NumPy library. NumPy
+<p>One of the most popular scientific computing libraries is the NumPy library. NumPy
 is the fundamental package for scientific computing with Python. Among other things,
 it includes support for large, multidimensional arrays and matrices. This
 library has special features for linear algebra, Fourier transform, and random
-number capabilities among others.
+number capabilities among others.</p>
 
-The advantages of using FMV technology in a scientific library such as NumPy are well
+<p>The advantages of using FMV technology in a scientific library such as NumPy are well
 understood and accepted. If vectorization is not enabled, a lot of unused space in
 SIMD registers goes to waste. If vectorization is enabled, the compiler gets to use the
 additional registers to perform more operations (for the additions of more integers, in our
-example) in a single instruction. 
+example) in a single instruction. </p>
 
-As we can see in the following table, the performance boost due to FMV technology (running in
+<p>As we can see in the following table, the performance boost due to FMV technology (running in
 a Haswell machine with AVX2 instructions) can be up to 3 percent in terms of execution time for scientific
-workloads. The benchmark that is used in this is example is the one from [openbenchmarking numpy-1.0.2](https://openbenchmarking.org/test/pts/numpy) test. 
+workloads. The benchmark that is used in this is example is the one from 
+ <a href="https://openbenchmarking.org/test/pts/numpy">openbenchmarking numpy-1.0.2</a> test. </p>
 
 <table>
     <tbody>
@@ -327,29 +340,34 @@ workloads. The benchmark that is used in this is example is the one from [openbe
     </tbody>
 </table>
 
-This performance improvement is due to the functions in numpy code that benefit
+<p>This performance improvement is due to the functions in numpy code that benefit
 from vectorization. In order to detect this functions GCC
-provides the flag "-fopt-info-vec". This flag detect the
+provides the flag ``-fopt-info-vec`` . This flag detect the
 vectorization-candidate functions. For example, building numpy with this flag
-will tell us that the file fftpack.c has code that can use vectorization: 
+will tell us that the file fftpack.c has code that can use vectorization: </p>
 
-```
+<pre>
 numpy/fft/fftpack.c:813:7: note: loop peeled for vectorization to enhance alignment
-```
+</pre>
 
-When we check the [numpy source code](https://github.com/numpy/numpy/blob/master/numpy/fft/fftpack.c)
+<p>When we check the 
+<a href="https://github.com/numpy/numpy/blob/master/numpy/fft/fftpack.c">numpy
+    source code </a>
 , it's easy to see how the ``static void radfg`` function performs heavy array additions
-that use AVX technology.
+that use AVX technology.</p>
 
-### Next steps
+<p><strong>Next steps</strong></p>
 
-The [Clear Linux Project for Intel Architecture](https://clearlinux.org/) is currently focusing on
+<p>The 
+<a href="https://clearlinux.org/">Clear Linux Project for Intel
+    Architecture</a> is currently focusing on
 applying FMV technology to packages where it is detected that AVX instructions can yield an improvement
 ( AVX / AVX2 / AVX-512).  To solve some of the issues involved with supporting FMV in a full Linux
-distribution, Clear Linux Project for Intel Architecture provides a [patch generator](https://download.clearlinux.org/current/source/SRPMS/clr-rpm-config-35-38.src.rpm) based
+distribution, Clear Linux Project for Intel Architecture provides a 
+<a href="https://download.clearlinux.org/current/source/SRPMS/clr-rpm-config-35-38.src.rpm"> patch generator </a> based
 on vectorization-candidate detection (using the ``-fopt-info-vec`` flag). This tool can provide all
 the FMV patches that a Linux distribution might use.  We are selecting the ones that gave a significant
 performance improvement based on our benchmarks. There are other compiler optimization techniques that take
 advantage of the profile data to perform additional optimizations based on how the code behaves. Clear
 Linux Project for Intel Architecture will use these profiling features as well as the FMV approach to
-improving the performance of user applications as much as possible.
+improving the performance of user applications as much as possible.</p>
