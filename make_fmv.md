@@ -84,7 +84,7 @@ for (i=0; i<256; i++){
 
 ```
 
-In order to genearte the FMV patch with the project
+In order to generate the FMV patch with the project
 [make-fmv-patch](https://github.com/clearlinux/make-fmv-patch) we need to clone
 it and generate a log file with the loop vectorized information: 
 
@@ -120,9 +120,10 @@ This will generate the patch: example.c.patch
      for (x=0; x<MAX; x++){
 ```
 
-We can see that make-fmv-patch is recomended to add the atribute that generates
+We can see that make-fmv-patch is recommended to add the attribute that generates
 target clones on the function foo. When we do this is possible to have the
-folllwoing code: 
+following code:
+
 
 ```c
 #include <stdio.h>
@@ -156,7 +157,7 @@ make-fmv-patch.pl script , changing the value of this variable:
 my $avx2 = '__attribute__((target_clones("avx2","arch=atom","default")))'."\n";
 ```
 
-When we compile again the code with FMV and the capability to analize the
+When we compile again the code with FMV and the capability to analyze the
 objdump: 
 
 ```
@@ -164,7 +165,7 @@ gcc -O3 example.c -o example -g
 objdump -S example | less
 ```
 
-We will be able to see that there are multiple clones for the foo funciton: 
+We will be able to see that there are multiple clones for the foo function: 
 
 ```
 foo
@@ -180,8 +181,8 @@ vpaddd (%r8,%rax,1),%ymm0,%ymm0
 vmovdqu %ymm0,(%rcx,%rax,1)
 ```
 
-Now for a big package like FFT is necesary to get the build log file adding
--fopt-info-vec flag and follow the same aproach: 
+Now for a big package like FFT is necessary to get the build log file adding
+-fopt-info-vec flag and follow the same approach: 
 
 ```
 ~/make-fmv-patch/make-fmv-patch.pl results/build.log fftw-3.3.6-pl2/
