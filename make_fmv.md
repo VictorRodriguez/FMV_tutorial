@@ -85,6 +85,8 @@ for (i=0; i<256; i++){
 
 ```
 
+## Generate the FMV patch
+
 In order to generate the FMV patch with the project
 [make-fmv-patch](https://github.com/clearlinux/make-fmv-patch) we need to clone
 it and generate a log file with the loop vectorized information: 
@@ -94,7 +96,7 @@ it and generate a log file with the loop vectorized information:
     gcc -O3  -fopt-info-vec  example.c -o example &> log
 ```
 
-In order to generate the patch files we have to execute:
+Then to generate the patch files we have to execute:
 
 ```
     perl ./make-fmv-patch/make-fmv-patch.pl log .
@@ -182,7 +184,9 @@ vpaddd (%r8,%rax,1),%ymm0,%ymm0
 vmovdqu %ymm0,(%rcx,%rax,1)
 ```
 
-Now for a big package like FFT is necessary to get the build log file adding
+## Example with FFT project
+
+Now for a package like FFT is necessary to get the build log file adding
 -fopt-info-vec flag and follow the same approach: 
 
 ```
