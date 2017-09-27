@@ -18,8 +18,17 @@ libraries to deploy architecture-based optimizations to application code.
 
 First, follow our instructions to install [Clear Linux on bare
 metal](https://clearlinux.org/documentation/clear-linux/get-started/bare-metal-install/bare-metal-install.html#bare-metal-install)
-Once the bare metal installation and initial configuration are complete, you
-will have all you need to run this tutorial example
+
+Once the bare metal installation and initial configuration are complete, add
+the following bundle to your system: 
+
+  * desktop-dev: This bundle contains the necessary development tools like gcc
+    and perl
+
+To install the bundles, run the following command in your $HOME directory:
+
+# sudo swupd bundle-add desktop-dev
+
 
 ## Detect loop vectorization candidates
 
@@ -163,12 +172,94 @@ foo.avx2.0
 foo.arch_atom.1
 ```
 
-The avx2 funciton use specific AVX2 registers: 
+We can see that the cloned functions use AVX2 registers and vectorized
+instructions: 
 
-```
+```assembly
+vpaddd (%r8,%rax,1),%ymm0,%ymm0
 vmovdqu %ymm0,(%rcx,%rax,1)
 ```
 
+Now for a big package like FFT is necesary to get the build log file adding
+-fopt-info-vec flag and follow the same aproach: 
+
+```
+~/make-fmv-patch/make-fmv-patch.pl results/build.log fftw-3.3.6-pl2/
+
+patching fftw-3.3.6-pl2/libbench2/verify-lib.c @ lines (36 114 151 162 173 195 215 284)
+patching fftw-3.3.6-pl2/tools/fftw-wisdom.c @ lines (150)
+patching fftw-3.3.6-pl2/libbench2/speed.c @ lines (26)
+patching fftw-3.3.6-pl2/tests/bench.c @ lines (27)
+patching fftw-3.3.6-pl2/libbench2/util.c @ lines (181)
+patching fftw-3.3.6-pl2/libbench2/problem.c @ lines (229)
+patching fftw-3.3.6-pl2/tests/fftw-bench.c @ lines (101 147 162 249)
+patching fftw-3.3.6-pl2/libbench2/mp.c @ lines (79 190 215)
+patching fftw-3.3.6-pl2/libbench2/caset.c @ lines (5)
+patching fftw-3.3.6-pl2/libbench2/verify-r2r.c @ lines (44 187 197 207 316 333 723)
+
+```
+
+From there we can see that files like: 
+
+```
+fftw-3.3.6-pl2/tools/fftw-wisdom.c.patch
+
+```
+
+Generates a patch like : 
+
+```git
+  1 --- fftw-3.3.6-pl2/libbench2/verify-lib.c   2017-01-27 21:08:13.000000000 +0000
+  2 +++ fftw-3.3.6-pl2/libbench2/verify-lib.c~  2017-09-27 17:49:21.913802006 +0000
+  3 @@ -33,6 +33,7 @@
+  4
+  5  double dmax(double x, double y) { return (x > y) ? x : y; }
+  6
+  7 +__attribute__((target_clones("avx2","arch=atom","default")))
+  8  static double aerror(C *a, C *b, int n)
+  9  {
+ 10       if (n > 0) {
+ 11 @@ -111,6 +112,7 @@
+ 12  }
+ 13
+ 14  /* make array hermitian */
+ 15 +__attribute__((target_clones("avx2","arch=atom","default")))
+ 16  void mkhermitian(C *A, int rank, const bench_iodim *dim, int stride)
+ 17  {
+ 18       if (rank == 0)
+ 19 @@ -148,6 +150,7 @@
+ 20  }
+ 21
+ 22  /* C = A + B */
+ 23 +__attribute__((target_clones("avx2","arch=atom","default")))
+ 24  void aadd(C *c, C *a, C *b, int n)
+ 25  {
+ 26       int i;
+ 27 @@ -159,6 +162,7 @@
+ 28  }
+ 29
+ 30  /* C = A - B */
+ 31 +__attribute__((target_clones("avx2","arch=atom","default")))
+ 32  void asub(C *c, C *a, C *b, int n)
+ 33  {
+ 34       int i;
+ 35 @@ -170,6 +174,7 @@
+ 36  }
+ 37
+ 38  /* B = rotate left A (complex) */
+ 39 +__attribute__((target_clones("avx2","arch=atom","default")))
+ 40  void arol(C *b, C *a, int n, int nb, int na)
+ 41  {
+ 42       int i, ib, ia;
+ 43 @@ -192,6 +197,7 @@
+ 44       }
+ 45  }
+
+```
+
+With this patches is possible to select where to apply the FMV technology that
+make it even easier to bring architecture-based optimizations to application
+code.
 
 Congratulations!  You have successfully installed an FMV  development
 environment  on Clear Linux. Furthermore, you use cutting edge compiler
