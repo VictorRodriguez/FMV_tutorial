@@ -49,55 +49,56 @@ int main(){
     foo();
     return 0;
 }
-'''
+```
+
 
 After saving the code with the name example.c, we can build with the following
 flags: 
 
-'''
+```
     gcc -O3  -fopt-info-vec  example.c -o example
-'''
+```
 
 This will generate the following output:
 
-'''
+```
 example.c:11:9: note: loop vectorized
 example.c:11:9: note: loop vectorized
-'''
+```
 
 As we can see on the source code that specific line 11 is a good candidate for
 vectorization:
 
-'''c
+```c
 for (i=0; i<256; i++){
     a[i] = b[i] + c[i];
 
-'''
+```
 
 In order to genearte the FMV patch with the project
 [make-fmv-patch](https://github.com/clearlinux/make-fmv-patch) we need to clone
 it and generate a log file with the loop vectorized information: 
 
-'''
+```
     git clone https://github.com/clearlinux/make-fmv-patch.git
     gcc -O3  -fopt-info-vec  example.c -o example &> log
-'''
+```
 
 In order to generate the patch files we have to execute:
 
-'''
+```
     perl ./make-fmv-patch/make-fmv-patch.pl log .
-'''
+```
 
 The make-fmv-patch.pl take two arguments: 
 
-'''
+```
     perl make-fmv-patch.pl <buildlog> <sourcecode>
-'''
+```
 
 This will generate the patch: example.c.patch
 
-'''
+```
 --- ./example.c	2017-09-27 16:05:42.279505430 +0000
 +++ ./example.c~	2017-09-27 16:19:11.691544026 +0000
 @@ -5,6 +5,7 @@
@@ -108,7 +109,7 @@ This will generate the patch: example.c.patch
  void foo(){
      int i,x;
      for (x=0; x<MAX; x++){
-'''
+```
 
 We can see that make-fmv-patch is recomended to add the atribute that generates
 target clones on the function foo. When we do this is possible to have the
@@ -137,35 +138,36 @@ int main(){
     foo();
     return 0;
 }
-'''
+```
 
 We can change the target clones when we add the patches or in the
 make-fmv-patch.pl script , changing the value of this variable:
 
-'''perl
+```perl
 my $avx2 = '__attribute__((target_clones("avx2","arch=atom","default")))'."\n";
-'''
+```
 
 When we compile again the code with FMV and the capability to analize the
 objdump: 
 
-'''
+```
 gcc -O3 example.c -o example -g
 objdump -S example | less
-'''
+```
 
 We will be able to see that there are multiple clones for the foo funciton: 
 
-'''
+```
 foo
 foo.avx2.0
 foo.arch_atom.1
-'''
+```
+
 The avx2 funciton use specific AVX2 registers: 
 
-'''
+```
 vmovdqu %ymm0,(%rcx,%rax,1)
-'''
+```
 
 
 Congratulations!  You have successfully installed an FMV  development
