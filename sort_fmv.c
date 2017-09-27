@@ -35,7 +35,7 @@ int main(){
     return 0;
 }
 
-__attribute__((ctarget("arch=core-avx2","arch=atom","arch=slm","default"),noinline))
+__attribute__((target_clones("arch=core-avx2","arch=atom","arch=slm","default"),noinline))
 void foo(){
     int i,x;
     for (x=0; x<MAX; x++){
@@ -46,7 +46,7 @@ void foo(){
 }
 
 
-__attribute__((ctarget("arch=core-avx2","arch=atom","arch=slm","default"),noinline))
+__attribute__((target_clones("arch=core-avx2","arch=atom","arch=slm","default"),noinline))
 void bubble_sort (int *a, int n) {
     int i, t, s = 1;
     while (s) {
@@ -63,7 +63,7 @@ void bubble_sort (int *a, int n) {
 }
 
 
-__attribute__((ctarget("arch=core-avx2","arch=atom","arch=slm","default"),noinline))
+__attribute__((target_clones("arch=core-avx2","arch=atom","arch=slm","default"),noinline))
 void foo_1(){
     int i,x;
     for (x=0; x<MAX; x++){
