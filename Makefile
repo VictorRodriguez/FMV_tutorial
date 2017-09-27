@@ -20,10 +20,10 @@ avx2_objdump:
 	gcc -O3 sort.c -g -c -mavx2
 
 fmv:
-	gcc -O3  -fopt-info-vec  sort_fmv.c -o sort
+	gcc -O3  -fopt-info-vec  example_fmv.c -o example_fmv
 
 fmv_objdump:
-	gcc -O3 sort_fmv.c -g -c
+	gcc -O3 example_fmv.c -g -c
 
 clean:
 	rm -rf sort
