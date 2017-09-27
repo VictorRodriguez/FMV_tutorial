@@ -27,8 +27,9 @@ the following bundle to your system:
 
 To install the bundles, run the following command in your $HOME directory:
 
+```
 # sudo swupd bundle-add desktop-dev
-
+```
 
 ## Detect loop vectorization candidates
 
